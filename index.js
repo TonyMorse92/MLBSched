@@ -1,3 +1,5 @@
+
+
 const app = document.getElementById("base");
 
 
@@ -9,12 +11,129 @@ app.appendChild(container);
 const date = new Date();
 
 const year = date.getFullYear();
-const month = (date.getMonth() + 1); // Month goes 0-11, so need to offset by 1
+const month = (date.getMonth() + 1); // Month goes 0-11, so need to offset by 1 for API
 const day = date.getDate();
 
 const yearString = year.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
 const monthString = month.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
 const dayString = day.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+
+function createCalendar()
+{
+	const calendar = document.getElementById("calendar");
+
+	// Can just be one function with an array of the days. It would look better
+	table = document.createElement("td");
+	headerRow = document.createElement("tr");
+
+	sunday = document.createElement("th");
+	sunday.textContent = "S";
+	headerRow.appendChild(sunday);
+
+	monday = document.createElement("th");
+	monday.textContent = "M";
+	headerRow.appendChild(monday);
+
+	tuesday = document.createElement("th");
+	tuesday.textContent = "T";
+	headerRow.appendChild(tuesday);
+
+	wednesday = document.createElement("th");
+	wednesday.textContent = "W";
+	headerRow.appendChild(wednesday);
+
+	thursday = document.createElement("th");
+	thursday.textContent = "T";
+	headerRow.appendChild(thursday);
+
+	friday = document.createElement("th");
+	friday.textContent = "F";
+	headerRow.appendChild(friday);
+
+	saturday = document.createElement("th");
+	saturday.textContent = "S";
+	headerRow.appendChild(saturday);
+
+
+	table.appendChild(headerRow);
+
+	
+	dayMonthStartsOn = new Date(year,month - 1,1).getDay();
+	firstRow = document.createElement("tr");
+
+	
+	// First date rows
+	// Make blanks until first day of month
+	var dayCounter = 1; // Start the date out at 1
+	for(var i = 1; i < dayMonthStartsOn; i++)
+	{
+		blankDay = document.createElement("td");
+		blankDay.textContent = "";
+		firstRow.appendChild(blankDay);	
+	}
+
+	// This will be the first row actual days
+	for(var j = dayMonthStartsOn; j < 7; j++)
+	{
+		numDay = document.createElement("td");
+		numDay.textContent = dayCounter;
+		firstRow.appendChild(numDay);
+		dayCounter++;
+	}
+
+	table.appendChild(firstRow);
+	
+
+	// Can just fill the next few rows in
+	for(var rows = 2; rows < 5; rows++)
+	{
+		var newRow = document.createElement("tr");
+		for(var col = 0; col < 7; col++)
+		{
+			numDay = document.createElement("td");
+			numDay.textContent = dayCounter;
+			newRow.appendChild(numDay);
+			dayCounter++;
+		}
+		table.appendChild(newRow);
+	}
+
+	
+	
+	var lastDayOfMonth = new Date(year, month,0).getDate();
+	var lastRow = document.createElement("tr");
+	// Last row go until we are at the last day,
+	// Then just add blanks
+	for(var end = dayCounter; end < lastDayOfMonth + 1; end++)
+	{
+		numDay = document.createElement("td");
+		numDay.textContent = dayCounter;
+		lastRow.appendChild(numDay);
+		dayCounter++;	
+	}
+
+	
+	
+	// Last blanks
+	// Putting 35 initially, I think it should be 36
+	for(var last = lastDayOfMonth; last < 35; last++)
+	{
+		blankDay = document.createElement("td");
+		blankDay.textContent = "";
+		lastRow.appendChild(blankDay);	
+	}
+	
+	table.appendChild(lastRow);
+
+
+	// Default to the first of the current month
+	//alert("First day of month: " + new Date(year,month - 1,1).getDay());
+	//alert("Last numbered day of month: " + new Date(year, month,0).getDate());
+
+	calendar.appendChild(table);
+}
+
+
 
 const apiDateString = yearString + monthString + dayString;
 //alert("Testing date: " + apiDateString);
@@ -70,4 +189,7 @@ request.onload = function ()
 function getHomeColor(homeTeam)
 {
 }
+
+createCalendar();
+
 request.send();
