@@ -25,6 +25,11 @@ function createCalendar()
 	// Can just be one function with an array of the days. It would look better
 	table = document.createElement("table");
 	table.setAttribute("id", "tbl");
+
+	caption = document.createElement("caption");
+	caption.textContent = "Month";
+	table.appendChild(caption);
+
 	headerRow = document.createElement("tr");
 
 	sunday = document.createElement("th");
@@ -138,10 +143,28 @@ function createCalendar()
 	// Checking table size to see if I can just loop through like normal
 	//alert("Number rows: " + table.rows.length);
 	//alert("Number cols: " + table.rows[0].cells.length);
+
+	// Start at 1 because first row is the days of the week
+    for (var i = 1; i < table.rows.length; i++) {
+        for (var j = 0; j < table.rows[i].cells.length; j++)
+        table.rows[i].cells[j].onclick = function () {
+            tableText(this);
+        };
+    
+	}
+
+	caption.onclick = function() {
+	tableText(this);	};
+
 }
 
 
-
+function tableText(tableCell) {
+	if(tableCell.innerHTML != "")    
+	alert(tableCell.innerHTML);
+	else
+	alert("Pick an actual date.");
+}
 const apiDateString = yearString + monthString + dayString;
 //alert("Testing date: " + apiDateString);
 
