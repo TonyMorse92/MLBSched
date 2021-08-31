@@ -23,7 +23,8 @@ function createCalendar()
 	const calendar = document.getElementById("calendar");
 
 	// Can just be one function with an array of the days. It would look better
-	table = document.createElement("td");
+	table = document.createElement("table");
+	table.setAttribute("id", "tbl");
 	headerRow = document.createElement("tr");
 
 	sunday = document.createElement("th");
@@ -131,6 +132,12 @@ function createCalendar()
 	//alert("Last numbered day of month: " + new Date(year, month,0).getDate());
 
 	calendar.appendChild(table);
+
+	
+
+	// Checking table size to see if I can just loop through like normal
+	//alert("Number rows: " + table.rows.length);
+	//alert("Number cols: " + table.rows[0].cells.length);
 }
 
 
