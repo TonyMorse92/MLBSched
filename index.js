@@ -11,24 +11,39 @@ app.appendChild(container);
 const date = new Date();
 
 const year = date.getFullYear();
-const month = (date.getMonth() + 1); // Month goes 0-11, so need to offset by 1 for API
-const day = date.getDate();
+var month = (date.getMonth() + 1); // Month goes 0-11, so need to offset by 1 for API
+var day = date.getDate();
 
 const yearString = year.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
 const monthString = month.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
 const dayString = day.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
 
+const months = 
+[
+	"January", "February", "March", "April", "May", "June",
+	"July", "August", "September", "October", "November", "December"
+];
+
 function createCalendar()
 {
-	const calendar = document.getElementById("calendar");
+	currentMonth = document.getElementById("current-month");
+	currentMonth.textContent = months[month-1];
+	//alert("Month: " + month);
+	/*
+	//const calendar = document.getElementById("date-selection");
+
+	// Put the month as a select
+	monthSelect = document.createElement("select");
+	monthSelect.value = "August";
+	calendar.appendChild(monthSelect);
 
 	// Can just be one function with an array of the days. It would look better
 	table = document.createElement("table");
 	table.setAttribute("id", "tbl");
 
-	caption = document.createElement("caption");
-	caption.textContent = "Month";
-	table.appendChild(caption);
+	//caption = document.createElement("caption");
+	//caption.textContent = "Month";
+	//table.appendChild(caption);
 
 	headerRow = document.createElement("tr");
 
@@ -67,76 +82,90 @@ function createCalendar()
 	dayMonthStartsOn = new Date(year,month - 1,1).getDay();
 	firstRow = document.createElement("tr");
 
-	
+	*/
+
+	table = document.getElementById("table");
 	// First date rows
 	// Make blanks until first day of month
+	var dayMonthStartsOn = new Date(year,month - 1,1).getDay();
 	var dayCounter = 1; // Start the date out at 1
-	for(var i = 1; i < dayMonthStartsOn; i++)
+
+	//var rowCounter = 2; // The first two rows are headers
+	/*var colCounter = 0;
+	for(var i = 0; i < dayMonthStartsOn; i++)
 	{
-		blankDay = document.createElement("td");
-		blankDay.textContent = "";
-		firstRow.appendChild(blankDay);	
-	}
+		colCounter++;	
+	}*/
+
+
+	// I have the loop above. I don't think I need it, because if the
+	// day starts on say Monday, then dayMonthStartOn will be 1, so I just use that.
+	//alert("Day month starts on: " + dayMonthStartsOn);
 
 	// This will be the first row actual days
 	for(var j = dayMonthStartsOn; j < 7; j++)
 	{
-		numDay = document.createElement("td");
-		numDay.textContent = dayCounter;
-		firstRow.appendChild(numDay);
+		//alert("j: " + j);
+		table.rows[2].cells[j].textContent = dayCounter;
+		//numDay.textContent = dayCounter;
 		dayCounter++;
 	}
 
-	table.appendChild(firstRow);
+	//table.appendChild(firstRow);
 	
 
 	// Can just fill the next few rows in
-	for(var rows = 2; rows < 5; rows++)
+	for(var rowNum = 3; rowNum < 6; rowNum++)
 	{
-		var newRow = document.createElement("tr");
-		for(var col = 0; col < 7; col++)
+		//var newRow = document.createElement("tr");
+		for(var colNum = 0; colNum < 7; colNum++)
 		{
-			numDay = document.createElement("td");
-			numDay.textContent = dayCounter;
-			newRow.appendChild(numDay);
+			table.rows[rowNum].cells[colNum].textContent = dayCounter;
+			//numDay = document.createElement("td");
+			//numDay.textContent = dayCounter;
+			//newRow.appendChild(numDay);
 			dayCounter++;
 		}
-		table.appendChild(newRow);
+		//table.appendChild(newRow);
 	}
 
 	
 	
 	var lastDayOfMonth = new Date(year, month,0).getDate();
-	var lastRow = document.createElement("tr");
+	//var lastRow = document.createElement("tr");
 	// Last row go until we are at the last day,
 	// Then just add blanks
+	//alert("Last day of month: " + lastDayOfMonth);
+	var colCounter = 0;
 	for(var end = dayCounter; end < lastDayOfMonth + 1; end++)
 	{
-		numDay = document.createElement("td");
-		numDay.textContent = dayCounter;
-		lastRow.appendChild(numDay);
+		table.rows[6].cells[colCounter].textContent = dayCounter;
+		//numDay = document.createElement("td");
+		//numDay.textContent = dayCounter;
+		//lastRow.appendChild(numDay);
+		colCounter++;
 		dayCounter++;	
 	}
 
 	
-	
+	// I don't need to do this anymore, because they are blank by default
 	// Last blanks
 	// Putting 35 initially, I think it should be 36
-	for(var last = lastDayOfMonth; last < 35; last++)
+	/*for(var last = lastDayOfMonth; last < 35; last++)
 	{
 		blankDay = document.createElement("td");
 		blankDay.textContent = "";
 		lastRow.appendChild(blankDay);	
 	}
 	
-	table.appendChild(lastRow);
+	table.appendChild(lastRow);*/
 
 
 	// Default to the first of the current month
 	//alert("First day of month: " + new Date(year,month - 1,1).getDay());
 	//alert("Last numbered day of month: " + new Date(year, month,0).getDate());
 
-	calendar.appendChild(table);
+	//calendar.appendChild(table);
 
 	
 
@@ -144,27 +173,66 @@ function createCalendar()
 	//alert("Number rows: " + table.rows.length);
 	//alert("Number cols: " + table.rows[0].cells.length);
 
-	// Start at 1 because first row is the days of the week
-    for (var i = 1; i < table.rows.length; i++) {
-        for (var j = 0; j < table.rows[i].cells.length; j++)
-        table.rows[i].cells[j].onclick = function () {
-            tableText(this);
-        };
-    
+	// Start at 2 because first two rows are headers
+	for (var i = 2; i < table.rows.length; i++) 
+	{	
+		for (var j = 0; j < table.rows[i].cells.length; j++)
+		{
+			table.rows[i].cells[j].onclick = function ()
+			{
+				changeDate(this);
+			};
+		}
+	}
+	
+	
+	backButton = document.getElementById("back");
+	forwardButton = document.getElementById("forward");
+
+	backButton.onclick = function()
+	{
+		changeMonth(-1);
 	}
 
-	caption.onclick = function() {
-	tableText(this);	};
-
+	//caption.onclick = function() 
+	//currentMonth.onclick = function()
+	forwardButton.onclick = function()
+	{
+		changeMonth(1);	
+	};
 }
 
-
-function tableText(tableCell) {
-	if(tableCell.innerHTML != "")    
-	alert(tableCell.innerHTML);
+function changeMonth(chosenMonth) 
+{
+	if(chosenMonth > 0)
+	{    
+		alert("Going forward");
+		//month = chosenMonth.innerHTML;
+	}
+	else if(chosenMonth < 0)
+	{
+		alert("Going back");
+	}
 	else
-	alert("Pick an actual date.");
+	{
+		alert("Error");
+	}
 }
+
+function changeDate(chosenDate) 
+{
+	if(chosenDate.innerHTML != "")
+	{    
+		alert(chosenDate.innerHTML);
+		day = chosenDate;
+	}
+	else
+	{
+		alert("Pick an actual date.");
+	}
+}
+
+
 const apiDateString = yearString + monthString + dayString;
 //alert("Testing date: " + apiDateString);
 

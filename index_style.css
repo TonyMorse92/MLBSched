@@ -20,7 +20,7 @@ html
 	margin: auto;
 }
 
-#calendar
+#date-selection
 {
 	text-align: center;
 }
@@ -75,6 +75,12 @@ th
 	border: 1px solid black;
 	padding: 3px;
 	text-align: center;
+}
+
+.day-of-week
+{
+	font-weight: bold;
+	background-color: #E6E6E6;
 }
 
 th 
