@@ -8,11 +8,9 @@ const months =
 const table = document.getElementById("table");
 
 const app = document.getElementById("base");
-const container = document.createElement("div");
-container.setAttribute('class', 'container');
-app.appendChild(container);
 
 
+var currentMonth = document.getElementById("current-month");
 const backButton = document.getElementById("back");
 const forwardButton = document.getElementById("forward");
 
@@ -33,9 +31,10 @@ window.onload = makeCalendarInteractive();
 
 function fillPage(year = new Date().getFullYear(), month = new Date().getMonth(), day = new Date().getDate())
 {
-	/*alert("year: " + year);
-	alert("month: " + month);
-	alert("day: " + day);*/
+	//alert("fillPage Date: " + year + month + day);
+	//alert("year: " + year);
+	//alert("month: " + month);
+	//alert("day: " + day);
 
 	createCalendar(year, month, day);
 	sendRequest(year, month, day);
@@ -58,26 +57,61 @@ function makeCalendarInteractive()
 	// Month
 	backButton.onclick = function()
 	{
-		changeMonth(-1);
+		changeMonth("prev");
 	};
 
 	forwardButton.onclick = function()
 	{
-		changeMonth(1);	
+		changeMonth("next");	
 	};
 }
 
 
 
+/**************************************************************************************************************************/
 function createCalendar(year, month, day)
 {
-	currentMonth = document.getElementById("current-month");
+	//alert("createCalendar Date: " + year + month + day);
 	currentMonth.textContent = months[month];
 	
 	
-
+	
 	var dayMonthStartsOn = new Date(year,month,1).getDay();
+	//alert("Day month starts on: " + dayMonthStartsOn);
+	var lastDayOfMonth = new Date(year, (month + 1),0).getDate();
 	var dayCounter = 1; // Start the date out at 1
+	//var monthNeedsSeventhRow; = (lastDayOfMonth - dayMonthStartsOn) < 28; // There will be a 7th row
+	var maxRows;
+	
+	// No baseball in February, don't have to worry about that.
+	if((lastDayOfMonth > 30) && ((lastDayOfMonth - dayMonthStartsOn) < 28))
+	{
+		maxRows = 8;
+	}
+	else if((lastDayOfMonth == 30) && ((lastDayOfMonth - dayMonthStartsOn) < 27))
+	{
+		maxRows = 8;
+	}
+	else
+	{
+		maxRows = 7;
+	}
+	
+		
+	
+	/*if(monthNeedsSeventhRow)
+	{
+		alert("True");
+		maxRows = 8;
+	}
+	else
+	{
+		alert("False");
+		maxRows = 7;
+	}*/
+
+	//alert("Month: " + month + "   there will be a seventh row: " + test);
+	//if(lastDayOfMonth - dayMonthStartsOn < 28) 
 
 
 	// This will be the first row actual days
@@ -91,8 +125,10 @@ function createCalendar(year, month, day)
 		dayCounter++;
 	}
 
+	
+	//alert("Max Rows - 1: " + (maxRows - 1));
 	// Can just fill the next few rows in
-	for(var rowNum = 3; rowNum < 6; rowNum++)
+	for(var rowNum = 3; rowNum < (maxRows - 1); rowNum++)
 	{
 		for(var colNum = 0; colNum < 7; colNum++)
 		{
@@ -107,21 +143,25 @@ function createCalendar(year, month, day)
 
 	
 	
-	var lastDayOfMonth = new Date(year, month,0).getDate();
 
+	//alert("dayCounter: " + dayCounter);
+	//alert("lastDayOfMonth: " + lastDayOfMonth);
+	//alert("lastDayOfMonth + 1: " + (lastDayOfMonth + 1));
 	var colCounter = 0;
 	for(var end = dayCounter; end < lastDayOfMonth + 1; end++)
 	{
-		table.rows[6].cells[colCounter].textContent = dayCounter;
+		//alert("Max Rows: " + maxRows);
+		table.rows[(maxRows - 1)].cells[colCounter].textContent = dayCounter;
 		if(dayCounter == day)
 		{
-			table.rows[6].cells[colCounter].style.backgroundColor = "LightSkyBlue";
+			table.rows[(maxRows - 1)].cells[colCounter].style.backgroundColor = "LightSkyBlue";
 		}
 		colCounter++;
 		dayCounter++;	
 	}
 }
 
+/**************************************************************************************************************************/
 function resetHighlights()
 {
 	for (var i = 2; i < table.rows.length; i++) 
@@ -133,16 +173,52 @@ function resetHighlights()
 	}
 }
 
+function resetDates()
+{
+	for (var i = 2; i < table.rows.length; i++) 
+	{	
+		for (var j = 0; j < table.rows[i].cells.length; j++)
+		{
+			table.rows[i].cells[j].textContent = "";
+		}
+	}
+}
+
+
+function resetGames()
+{
+	var container = document.getElementById("container-id");
+	//app.removeChild(container);
+	container.remove();
+}
+
+/**************************************************************************************************************************/
 function changeMonth(chosenMonth) 
 {
-	if(chosenMonth > 0)
+	var newMonth;
+	if(chosenMonth == "next")
 	{    
-		alert("Going forward");
-		//month = chosenMonth.innerHTML;
+		newMonth = months.indexOf(currentMonth.textContent) + 1;
+		//alert("Going forward");
+		//alert("Current Month: " + months.indexOf(currentMonth.textContent));
+		//alert("New Month: " + newMonth);
+		resetHighlights();
+		resetDates();
+		resetGames();
+		fillPage(new Date().getFullYear(), newMonth, 1);
+		//alert("Month name: " + months[newMonth]);
 	}
-	else if(chosenMonth < 0)
+	else if(chosenMonth == "prev")
 	{
-		alert("Going back");
+		newMonth = months.indexOf(currentMonth.textContent) - 1;
+		//alert("Going back");
+		//alert("Current Month: " + months.indexOf(currentMonth.textContent));
+		//alert("New Month: " + newMonth);
+		resetHighlights();
+		resetDates();
+		resetGames();
+		fillPage(new Date().getFullYear(), newMonth, 1);
+		//alert("Month name: " + months[newMonth]);
 	}
 	else
 	{
@@ -152,11 +228,15 @@ function changeMonth(chosenMonth)
 
 function changeDate(chosenDate) 
 {
-	if(chosenDate.innerHTML != "")
+	var curMonth = months.indexOf(currentMonth.textContent);
+	var newDate = chosenDate.innerHTML;
+	if(newDate != "")
 	{    
-		alert(chosenDate.innerHTML);
+		//alert(newDate);
 		resetHighlights();
-		//day = chosenDate;
+		resetDates();
+		resetGames();
+		fillPage(new Date().getFullYear(), curMonth, newDate);
 	}
 	else
 	{
@@ -165,9 +245,10 @@ function changeDate(chosenDate)
 }
 
 
-
+/**************************************************************************************************************************/
 function sendRequest(year, month, day) 
 {
+	//alert("sendRequest Date: " + year + month + day);
 	//http://statsapi.mlb.com/api/v1/schedule/games/?sportId=1&startDate=2021-08-31&endDate=2021-08-31
 	//const requestURL = "http://statsapi.mlb.com/api/v1/schedule/games/?sportId=1"
 	var baseURL = "http://statsapi.mlb.com/api/v1/schedule/games/?sportId=1&startDate="
@@ -181,8 +262,14 @@ function sendRequest(year, month, day)
 	request.send();
 }
 
+/**************************************************************************************************************************/
 function loadHandler()
 {
+	const container = document.createElement("div");
+	container.setAttribute('class', 'container');
+	container.setAttribute('id', 'container-id');
+	app.appendChild(container);
+
 	// Begin accessing JSON data here
 	var data = JSON.parse(this.response);
 	
@@ -216,55 +303,8 @@ function loadHandler()
 		app.appendChild(errorMessage);
 	}
 }
-/*
-const requestURL = "http://statsapi.mlb.com/api/v1/schedule/games/?sportId=1"
 
-var request = new XMLHttpRequest();
-request.open('GET', requestURL, true);
-
-request.onload = function () 
-{
-
-	// Begin accessing JSON data here
-	var data = JSON.parse(this.response);
-	//alert("Data: " + data);
-	//alert("Data Team name: " + data.dates[0].games[0].teams.away.team.name);
-	var games = data.dates[0].games;
-	if (request.status >= 200 && request.status < 400) 
-	{
-		games.forEach(game => 
-		{
-			const card = document.createElement('div');
-			card.setAttribute('class', 'card');
-		
-			const h1 = document.createElement('h1');
-			h1.textContent = game.teams.away.team.name + " @ " + game.teams.home.team.name;
-			
-
-			const p = document.createElement('p');
-			utcDate = game.gameDate;
-			var localDate = new Date(utcDate);
-			var twelveHourDateFormat = localDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-			p.textContent =  twelveHourDateFormat;
-
-			container.appendChild(card);
-			card.appendChild(h1);
-			card.appendChild(p);
-		});
-	} 
-	else 
-	{
-		const errorMessage = document.createElement('marquee');
-		errorMessage.textContent = `Gah, it's not working!`;
-		app.appendChild(errorMessage);
-	}
-}
-
-
-
-request.send();
-*/
-
+/**************************************************************************************************************************/
 // Get team colors from https://teamcolorcodes.com/mlb-color-codes/
 function getHomeColor(homeTeam)
 {
