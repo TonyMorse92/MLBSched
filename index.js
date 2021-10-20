@@ -1,4 +1,5 @@
 /**************************************************************************************************************************/
+/******************************************** Initialize Variables ********************************************************/
 const months = 
 [
 	"January", "February", "March", "April", "May", "June",
@@ -14,18 +15,8 @@ var currentMonth = document.getElementById("current-month");
 const backButton = document.getElementById("back");
 const forwardButton = document.getElementById("forward");
 
-/*
-const date = new Date();
-
-const year = date.getFullYear();
-var month = (date.getMonth() + 1); // Month goes 0-11, so need to offset by 1 for API
-var day = date.getDate();*/
-
 /**************************************************************************************************************************/
-
-//createCalendar();
-//sendRequest();
-
+/******************************************** Initialize Calendar *********************************************************/
 window.onload = fillPage();
 window.onload = makeCalendarInteractive();
 
@@ -41,6 +32,7 @@ function fillPage(year = new Date().getFullYear(), month = new Date().getMonth()
 }
 
 /**************************************************************************************************************************/
+/******************************************* Add user functionality *******************************************************/
 function makeCalendarInteractive()
 {
 	// Dates
@@ -66,133 +58,6 @@ function makeCalendarInteractive()
 	};
 }
 
-
-
-/**************************************************************************************************************************/
-function createCalendar(year, month, day)
-{
-	//alert("createCalendar Date: " + year + month + day);
-	currentMonth.textContent = months[month];
-	
-	
-	
-	var dayMonthStartsOn = new Date(year,month,1).getDay();
-	//alert("Day month starts on: " + dayMonthStartsOn);
-	var lastDayOfMonth = new Date(year, (month + 1),0).getDate();
-	var dayCounter = 1; // Start the date out at 1
-	//var monthNeedsSeventhRow; = (lastDayOfMonth - dayMonthStartsOn) < 28; // There will be a 7th row
-	var maxRows;
-	
-	// No baseball in February, don't have to worry about that.
-	if((lastDayOfMonth > 30) && ((lastDayOfMonth - dayMonthStartsOn) < 28))
-	{
-		maxRows = 8;
-	}
-	else if((lastDayOfMonth == 30) && ((lastDayOfMonth - dayMonthStartsOn) < 27))
-	{
-		maxRows = 8;
-	}
-	else
-	{
-		maxRows = 7;
-	}
-	
-		
-	
-	/*if(monthNeedsSeventhRow)
-	{
-		alert("True");
-		maxRows = 8;
-	}
-	else
-	{
-		alert("False");
-		maxRows = 7;
-	}*/
-
-	//alert("Month: " + month + "   there will be a seventh row: " + test);
-	//if(lastDayOfMonth - dayMonthStartsOn < 28) 
-
-
-	// This will be the first row actual days
-	for(var j = dayMonthStartsOn; j < 7; j++)
-	{
-		table.rows[2].cells[j].textContent = dayCounter;
-		if(dayCounter == day)
-		{
-			table.rows[2].cells[j].style.backgroundColor = "LightSkyBlue";
-		}
-		dayCounter++;
-	}
-
-	
-	//alert("Max Rows - 1: " + (maxRows - 1));
-	// Can just fill the next few rows in
-	for(var rowNum = 3; rowNum < (maxRows - 1); rowNum++)
-	{
-		for(var colNum = 0; colNum < 7; colNum++)
-		{
-			table.rows[rowNum].cells[colNum].textContent = dayCounter;	
-			if(dayCounter == day)
-			{
-				table.rows[rowNum].cells[colNum].style.backgroundColor = "LightSkyBlue";
-			}
-			dayCounter++;
-		}
-	}
-
-	
-	
-
-	//alert("dayCounter: " + dayCounter);
-	//alert("lastDayOfMonth: " + lastDayOfMonth);
-	//alert("lastDayOfMonth + 1: " + (lastDayOfMonth + 1));
-	var colCounter = 0;
-	for(var end = dayCounter; end < lastDayOfMonth + 1; end++)
-	{
-		//alert("Max Rows: " + maxRows);
-		table.rows[(maxRows - 1)].cells[colCounter].textContent = dayCounter;
-		if(dayCounter == day)
-		{
-			table.rows[(maxRows - 1)].cells[colCounter].style.backgroundColor = "LightSkyBlue";
-		}
-		colCounter++;
-		dayCounter++;	
-	}
-}
-
-/**************************************************************************************************************************/
-function resetHighlights()
-{
-	for (var i = 2; i < table.rows.length; i++) 
-	{	
-		for (var j = 0; j < table.rows[i].cells.length; j++)
-		{
-			table.rows[i].cells[j].style.backgroundColor = "";
-		}
-	}
-}
-
-function resetDates()
-{
-	for (var i = 2; i < table.rows.length; i++) 
-	{	
-		for (var j = 0; j < table.rows[i].cells.length; j++)
-		{
-			table.rows[i].cells[j].textContent = "";
-		}
-	}
-}
-
-
-function resetGames()
-{
-	var container = document.getElementById("container-id");
-	//app.removeChild(container);
-	container.remove();
-}
-
-/**************************************************************************************************************************/
 function changeMonth(chosenMonth) 
 {
 	var newMonth;
@@ -244,8 +109,109 @@ function changeDate(chosenDate)
 	}
 }
 
+/**************************************************************************************************************************/
+/******************************************** Re-initialize Calendar *********************************************************/
+function createCalendar(year, month, day)
+{
+	//alert("createCalendar Date: " + year + month + day);
+	currentMonth.textContent = months[month];
+	
+	
+	var dayMonthStartsOn = new Date(year,month,1).getDay();
+	var lastDayOfMonth = new Date(year, (month + 1),0).getDate();
+	var dayCounter = 1; // Start the date out at 1
+
+	var maxRows;
+	
+	// No baseball in February, don't have to worry about that.
+	if((lastDayOfMonth > 30) && ((lastDayOfMonth - dayMonthStartsOn) < 28))
+	{
+		maxRows = 8;
+	}
+	else if((lastDayOfMonth == 30) && ((lastDayOfMonth - dayMonthStartsOn) < 27))
+	{
+		maxRows = 8;
+	}
+	else
+	{
+		maxRows = 7;
+	}
+
+
+	// This will be the first row actual days
+	for(var j = dayMonthStartsOn; j < 7; j++)
+	{
+		table.rows[2].cells[j].textContent = dayCounter;
+		if(dayCounter == day)
+		{
+			table.rows[2].cells[j].style.backgroundColor = "LightSkyBlue";
+		}
+		dayCounter++;
+	}
+
+	// Just fill the next few rows in
+	for(var rowNum = 3; rowNum < (maxRows - 1); rowNum++)
+	{
+		for(var colNum = 0; colNum < 7; colNum++)
+		{
+			table.rows[rowNum].cells[colNum].textContent = dayCounter;	
+			if(dayCounter == day)
+			{
+				table.rows[rowNum].cells[colNum].style.backgroundColor = "LightSkyBlue";
+			}
+			dayCounter++;
+		}
+	}
+
+	// Fill in the last days
+	var colCounter = 0;
+	for(var end = dayCounter; end < lastDayOfMonth + 1; end++)
+	{
+		//alert("Max Rows: " + maxRows);
+		table.rows[(maxRows - 1)].cells[colCounter].textContent = dayCounter;
+		if(dayCounter == day)
+		{
+			table.rows[(maxRows - 1)].cells[colCounter].style.backgroundColor = "LightSkyBlue";
+		}
+		colCounter++;
+		dayCounter++;	
+	}
+}
 
 /**************************************************************************************************************************/
+/*************************************** Helper functions for clean UI ****************************************************/
+function resetHighlights()
+{
+	for (var i = 2; i < table.rows.length; i++) 
+	{	
+		for (var j = 0; j < table.rows[i].cells.length; j++)
+		{
+			table.rows[i].cells[j].style.backgroundColor = "";
+		}
+	}
+}
+
+function resetDates()
+{
+	for (var i = 2; i < table.rows.length; i++) 
+	{	
+		for (var j = 0; j < table.rows[i].cells.length; j++)
+		{
+			table.rows[i].cells[j].textContent = "";
+		}
+	}
+}
+
+
+function resetGames()
+{
+	var container = document.getElementById("container-id");
+	//app.removeChild(container);
+	container.remove();
+}
+
+/**************************************************************************************************************************/
+/******************************************** API Request Handling ********************************************************/
 function sendRequest(year, month, day) 
 {
 	//alert("sendRequest Date: " + year + month + day);
@@ -257,13 +223,12 @@ function sendRequest(year, month, day)
 
 	//alert("Request:     " + requestURL);
 	var request = new XMLHttpRequest();
-	request.onload = loadHandler;
+	request.onload = processGames;
 	request.open('GET', requestURL, true);
 	request.send();
 }
 
-/**************************************************************************************************************************/
-function loadHandler()
+function processGames()
 {
 	const container = document.createElement("div");
 	container.setAttribute('class', 'container');
@@ -305,6 +270,7 @@ function loadHandler()
 }
 
 /**************************************************************************************************************************/
+/******************************** Make background colors based on Team Colors ********************************************/
 // Get team colors from https://teamcolorcodes.com/mlb-color-codes/
 function getHomeColor(homeTeam)
 {
